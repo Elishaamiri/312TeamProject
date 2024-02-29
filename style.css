@@ -1,0 +1,24 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+nav a {
+    margin-right: 1rem;
+    text-decoration: none;
+    color: #333;
+}
+
+#recipe-list {
+    padding: 1rem;
+}
+
+.recipe-item {
+    border-bottom: 1px solid #ddd;
+    padding: 1rem 0;
+}
