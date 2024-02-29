@@ -4,20 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Sharing Platform</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
         <h1>Recipe Sharing Platform</h1>
         <nav>
-            <!-- Navigation links -->
             <a href="/">Home</a>
+            <a href="/recipes">Browse Recipes</a>
             <a href="/submit">Submit Recipe</a>
         </nav>
     </header>
     <main>
         <section id="recipe-list">
-            <!-- Recipes will be dynamically inserted here -->
+            <h2>Featured Recipes</h2>
+            <!-- Sample recipe card insertion (You should replace this with dynamic content) -->
+            <div class="recipe-card">
+                <img src="path/to/recipe-image.jpg" alt="Recipe Name">
+                <div class="recipe-card-content">
+                    <h3 class="recipe-title">Recipe Name</h3>
+                    <p class="recipe-description">This is a short description of the recipe...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="submit-recipe">
+            <h2>Share Your Recipe</h2>
+            <form action="/submit" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="recipeName">Recipe Name:</label>
+                    <input type="text" id="recipeName" name="recipe_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="recipeDescription">Recipe Description:</label>
+                    <textarea id="recipeDescription" name="recipe_description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="recipeIngredients">Ingredients:</label>
+                    <textarea id="recipeIngredients" name="recipe_ingredients" required placeholder="List ingredients..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="recipeInstructions">Instructions:</label>
+                    <textarea id="recipeInstructions" name="recipe_instructions" required placeholder="Step-by-step instructions..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="recipeImage">Recipe Image:</label>
+                    <input type="file" id="recipeImage" name="recipe_image" accept="image/*">
+                </div>
+                <button type="submit">Share Recipe</button>
+            </form>
         </section>
     </main>
+    <footer>
+        <p>Developed by Jonah, Mat, Phillip, Elisha, and Sarah - Recipe Sharing Platform Project - CSE312</p>
+    </footer>
 </body>
 </html>
