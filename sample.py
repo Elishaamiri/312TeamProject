@@ -1,11 +1,24 @@
-from flask import Flask
+from flask import Flask, request, render_template
+from markupsafe import escape
+import bcrypt
+import util
+import mimetypes
+
 app = Flask(__name__)
 
 @app.route("/")
-
 def home():
-    with open("./virtflask/index.html","rb") as file:
-        print("opening file")
-        data=file.read()
-        return data
+    authtoken = request.cookies.get('AuthToken')
+    file = None
+    if authtoken != None:
+        return render_template('index.html')
+    else:
+        return render_template('basic.html')
+
+if __name__ == "__main__":
+    app.run()
+
+
+    
+    
     
