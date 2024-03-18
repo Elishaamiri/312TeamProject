@@ -7,7 +7,6 @@ from flask import request
 authSalt = b'$2b$12$c4kL2dmcmWvzgLmeQrZrb.'
 
 class Util:
-
      def generateRandomID(amount):
         id = ""
         for i in range(amount):
