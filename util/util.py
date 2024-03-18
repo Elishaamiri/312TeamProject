@@ -1,5 +1,5 @@
 import random
-import regex
+import re
 import bcrypt
 from flask import request
 
