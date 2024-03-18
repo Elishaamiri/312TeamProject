@@ -16,8 +16,7 @@ db_data = db['data']
 
 @app.route("/")
 def home():
-    authtoken = request.cookies.get('AuthToken')
-    if authtoken != None:
+    if "AuthToken" not in request.cookies:
         return Success.defaultPageLoad_success("index.html")
     else:
         return Success.defaultPageLoad_success("basic.html")
