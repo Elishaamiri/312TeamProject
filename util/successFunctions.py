@@ -5,7 +5,7 @@ import json
 class Success():
      def login_success(authToken):
           res = make_response("User Created")
-          res.status_code = 302
+          res.status_code = "302 User Authorized"
           res.headers['X-Content-Type-Options'] = "nosniff"
           res.location = "/"
           res.set_cookie("AuthToken",authToken,10000,httponly=True)
@@ -21,7 +21,8 @@ class Success():
      
      def register_success(username,password):
           res = make_response(json.dumps({'username':username,'password':password}))
-          res.status_code = 201
+          res.status_code = "302 User Created"
+          res.location = "/"
           res.headers['X-Content-Type-Options'] = "nosniff"
           res.mimetype = "application/json"
           return res

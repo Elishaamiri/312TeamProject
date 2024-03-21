@@ -8,25 +8,32 @@ def startingError(errorMsg):
 class Errors:
      def login_failed():
           res = startingError("Incorrect Login Info")
-          res.status_code = 302
+          res.status_code = "302 Incorrect Login Info"
           res.location = "/"
           res.mimetype = "text/plain"
           return res
 
      def unauthorized_user():
           res = make_response("Unauthorized User")
-          res.status_code = 401
+          res.status_code = "401 Unauthorized User"
           res.mimetype = "text/plain"
           return res
 
      def nonexistant():
           res = startingError("Requested Item Does Not Exist")
-          res.status_code = 404
+          res.status_code = "404 Does Not Exist"
           res.mimetype = "text/plain"
           return res  
 
+     def form_noData(location):
+          res = startingError("Missing Form Data")
+          res.status_code = "302 Missing Data"
+          res.mimetype = 'text/plain'
+          res.location = location
+          return res
+
      def badrequest():
           res = startingError("Bad Request")
-          res.status_code = 400
+          res.status_code = "400 Bad Request"
           res.mimetype = "text/plain"
           return res 
