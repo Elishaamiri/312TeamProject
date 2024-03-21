@@ -31,3 +31,11 @@ class Success():
           res = make_response(send_file(filepath),mimetypes.guess_type(filepath)[0])
           res.headers['X-Content-Type-Options'] = 'nosniff'
           return res
+
+     def logout_success():
+          res = make_response("Logout Successful")
+          res.status_code = "302 Logout Successful"
+          res.location = "./"
+          res.set_cookie("AuthToken",value="Doesnt Matter",max_age=0)
+          res.headers['X-Content-Type-Options'] = "nosniff"
+          return res

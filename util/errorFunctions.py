@@ -12,7 +12,14 @@ class Errors:
           res.location = "/"
           res.mimetype = "text/plain"
           return res
-
+     
+     def register_userExists():
+          res = startingError("User Already Exists")
+          res.status_code = "302 User Already Exists"
+          res.location = "/"
+          res.mimetype = "text/plain"
+          return res
+     
      def unauthorized_user():
           res = make_response("Unauthorized User")
           res.status_code = "401 Unauthorized User"

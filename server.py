@@ -35,7 +35,7 @@ def register():
     password = escape(data['password'])
     #Check if username exists
     if db_data.find_one({'username':username}) != None:
-        return Errors.badrequest()
+        return Errors.register_userExists()
     #Hash password and send to db
     hashedpassword = bcrypt.hashpw(password.encode('ascii'),bcrypt.gensalt())
     db_data.insert_one({'username':username,'password':hashedpassword})
@@ -55,7 +55,7 @@ def login():
 
     #Check if username exists and if password is correct
     if db_data.find_one({'username':username}) == None:
-        return Errors.badrequest()
+        return Errors.login_failed()
     if not bcrypt.checkpw(password.encode('ascii'),db_data.find_one({'username':username})['password']):
         return Errors.login_failed()
 
@@ -67,6 +67,14 @@ def login():
 
     #Return Success Message
     return Success.login_success(authToken)
+
+@app.route('/logout',methods=["POST"])
+def logout():
+    data = request.cookies
+    hashedToken = bcrypt.hashpw(data['AuthToken'].encode('ascii'),util.authSalt)
+    db_data.find_one_and_delete({"AuthToken":hashedToken})
+    return Success.logout_success()
+
 
 if __name__ == "__main__":
     app.run("0.0.0.0","8080")
