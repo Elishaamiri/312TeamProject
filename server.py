@@ -73,6 +73,9 @@ def logout():
     data = request.cookies
     hashedToken = bcrypt.hashpw(data['AuthToken'].encode('ascii'),util.authSalt)
     db_data.find_one_and_delete({"AuthToken":hashedToken})
+    # a = db_data.find({"AuthToken":{'$exists':True}})
+    # for i in a:
+    #     print(i)
     return Success.logout_success()
 
 
