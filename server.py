@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, make_response
+from flask import Flask, request, render_template, make_response, send_from_directory,url_for
 from html import escape
 import util.util as util
 from util.errorFunctions import Errors
@@ -13,16 +13,37 @@ mongo_client = pymongo.MongoClient("mongo")
 db = mongo_client["cse312"]
 db_data = db['data']
 
-@app.route("/")
+
+@app.route("/", methods=["GET"])
 def home():
     if "AuthToken" not in request.cookies:
         return Success.defaultPageLoad_success("homepage.html")
     else:
         return Success.defaultPageLoad_success("basic.html")
-    
-@app.route("/static/<path:filepath>")
-def getFile(filepath):
-    return Success.fileGet_success("/static/"+filepath)
+
+@app.route("/static/css/<subpath>" ,methods=["GET"])
+def send_css(subpath):
+    res = make_response(send_from_directory("static/css",subpath))
+    res.status_code = "200 OK"
+    res.headers['X-Content-Type-Options'] = 'nosniff'
+    res.mimetype = mimetypes.guess_type(subpath)[0]
+    return res
+
+@app.route("/static/images/<subpath>" ,methods=["GET"])
+def send_images(subpath):
+    res = make_response(send_from_directory("static/images",subpath))
+    res.status_code = "200 OK"
+    res.headers['X-Content-Type-Options'] = 'nosniff'
+    res.mimetype = mimetypes.guess_type(subpath)[0]
+    return res
+
+@app.route("/static/js/<subpath>" ,methods=["GET"])
+def send_js(subpath):
+    res = make_response(send_from_directory("static/js",subpath))
+    res.status_code = "200 OK"
+    res.headers['X-Content-Type-Options'] = 'nosniff'
+    res.mimetype = mimetypes.guess_type(subpath)[0]
+    return res
 
 @app.route('/register',methods=['POST'])
 def register():
