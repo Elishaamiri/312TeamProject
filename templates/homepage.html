@@ -10,13 +10,20 @@
     <link rel="stylesheet" href="../static/css/homepage.css">
 
 </head>
-<body>
+<body onload="loginLoaded();">
     <header>
-        
+      
     </header>
+    <div class="login-div">
+     <p id="words">
+          Welcome to the recipe hub... for recipes
+
+     </p>
+
+   </div>
     <main>
           <div class = "Container">
-
+               
                <div class="section">
                     <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
                          <h2>Register</h2>
