@@ -1,7 +1,9 @@
 from flask import make_response,render_template,send_from_directory
 import mimetypes
 import json
-
+from util import dataBaseManager as dbm
+import bcrypt
+import util.util as util
 class Success():
      def login_success(authToken):
           res = make_response("User Created")
@@ -10,6 +12,11 @@ class Success():
           res.location = "/"
           res.set_cookie("AuthToken",authToken,10000,httponly=True)
           res.mimetype = "text/plain"
+
+          Token = bcrypt.hashpw(authToken.encode('ascii'),util.authSalt)
+          user = dbm.findUserFromToken(Token)
+          print(f"User: {user} has logged in")
+
           return res
      
      def defaultPageLoad_success(page):
@@ -32,5 +39,12 @@ class Success():
           res.status_code = "302 Logout Successful"
           res.location = "./"
           res.set_cookie("AuthToken",value="Doesnt Matter",max_age=0)
+          res.headers['X-Content-Type-Options'] = "nosniff"
+          return res
+
+     def submit_success():
+          res = make_response(json.dumps({}))
+          res.status_code = "201 Created"
+          res.mimetype = "application/json"
           res.headers['X-Content-Type-Options'] = "nosniff"
           return res
