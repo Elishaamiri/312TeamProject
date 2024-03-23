@@ -13,6 +13,13 @@ class Errors:
           res.mimetype = "text/plain"
           return res
      
+     def register_passwordsDoNotMatch():
+          res = startingError("Passwords Do Not Match")
+          res.status_code = "302 Passwords Do Not Match"
+          res.location = "/"
+          res.mimetype = "text/plain"
+          return res
+
      def register_userExists():
           res = startingError("User Already Exists")
           res.status_code = "302 User Already Exists"

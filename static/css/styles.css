@@ -75,5 +75,10 @@ button:hover {
     width: 100%;
     height: auto;
     border-top-left-radius: 8px;
-    border-top-right-radius: 8px
+    border-top-right-radius: 8px;
+}
+
+.my_image {
+    height: 10%;
+    width: 10%;
 }
