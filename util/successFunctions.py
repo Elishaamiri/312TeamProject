@@ -12,14 +12,19 @@ class Success():
           res.location = "/"
           res.set_cookie("AuthToken",authToken,10000,httponly=True)
           res.mimetype = "text/plain"
-
+          
           user = dbm.findUserFromToken(authToken)
           print(f"User: {user} has logged in")
 
           return res
      
-     def defaultPageLoad_success(page):
-          res = make_response(render_template(page))
+     def defaultPageLoad_success(page,pageType,cookies):
+          if pageType == "login":
+               res = make_response(render_template(page))
+          elif pageType == "home":
+               token = cookies.get("AuthToken")
+               name = dbm.findUserFromToken(token)
+               res = make_response(render_template(page,username=name))
           res.status_code = 200
           res.headers['X-Content-Type-Options'] = "nosniff"
           res.mimetype = "text/html"
@@ -42,7 +47,11 @@ class Success():
           return res
 
      def submit_success(name,description,ingredients,instructions,image):
-          res = make_response(json.dumps({}))
+          name = str(name)
+          description = str(description)
+          ingredients = str(ingredients)
+          instructions = str(instructions)
+          res = make_response(json.dumps({'name':name,'description':description,'ingredients':ingredients,'instructions':instructions}))
           res.status_code = "201 Created"
           res.mimetype = "application/json"
           res.headers['X-Content-Type-Options'] = "nosniff"

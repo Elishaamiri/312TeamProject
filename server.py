@@ -20,16 +20,20 @@ def home():
     # we will need to ensure that the authtoken cookie contains a valid auth token tied to an account
     # otherwise anybody can just set an "AuthToken" cookie with any random value and gain access to posting 
     if "AuthToken" not in request.cookies:
-        return Success.defaultPageLoad_success("homepage.html")
+        return Success.defaultPageLoad_success("homepage.html","login",request.cookies)
     else:
         # logic for checking the token
         token = request.cookies.get("AuthToken")
         # check the data base to see if this token was issued to a user
-        user = dbm.findUserFromToken(token) 
-        if user == False:
-            return Success.defaultPageLoad_success("homepage.html")
+        # since all logged out users have an AuthToken value of '' this check ensures that if the Auth token is '' it doesn't try to check to database
+        if token == '':
+            user = False
         else:
-            return Success.defaultPageLoad_success("basic.html")
+            user = dbm.findUserFromToken(token) 
+        if user == False:
+            return Success.defaultPageLoad_success("homepage.html","login",request.cookies)
+        else:
+            return Success.defaultPageLoad_success("basic.html","home",request.cookies)
 
 @app.route("/static/css/<subpath>" ,methods=["GET"])
 def send_css(subpath):
@@ -38,6 +42,15 @@ def send_css(subpath):
     res.headers['X-Content-Type-Options'] = 'nosniff'
     res.mimetype = mimetypes.guess_type(subpath)[0]
     return res
+
+#@app.route("/static/favicon.ico", methods=["GET"])
+#def send_favicon():
+#    res = make_response(send_from_directory("static/favicon.ico"))
+#    res.status_code = "200 OK"
+#    res.headers['X-Content-Type-Options'] = 'nosniff'
+#    res.mimetype = "image/x-icon"
+#    return res
+
 
 @app.route("/static/images/<subpath>" ,methods=["GET"])
 def send_images(subpath):
@@ -61,6 +74,9 @@ def register():
     #Checks if there is missing data
     if 'username' not in data or 'password' not in data:
         return Errors.badrequest()
+    # checks if both the submitted passwords are the same
+    if data['password'] != data['password2']:
+        return Errors.register_passwordsDoNotMatch()
     #Escapes characters
     username = escape(data['username'])
     password = escape(data['password'])
@@ -101,8 +117,10 @@ def login():
 @app.route('/logout',methods=["POST"])
 def logout():
     data = request.cookies
-    hashedToken = bcrypt.hashpw(data['AuthToken'].encode('ascii'),util.authSalt)
-    db_data.find_one_and_delete({"AuthToken":hashedToken})
+    token = data["AuthToken"]
+    #hashedToken = bcrypt.hashpw(data['AuthToken'].encode('ascii'),util.authSalt)
+    dbm.handleLogout(token)
+    #db_data.find_one_and_delete({"AuthToken":hashedToken})
     # a = db_data.find({"AuthToken":{'$exists':True}})
     # for i in a:
     #     print(i)
@@ -115,11 +133,16 @@ def logout():
 @app.route('/submit',methods=["POST"])
 def submit():
     data = request.form
-    name = data['recipe_name']
-    description = data['recipe_description']
-    ingredients = data['recipe_ingredients']
-    instructions = data['recipe_instructions']
+    cookies = request.cookies
+    
+    name = escape(data['recipe_name'])
+    description = escape(data['recipe_description'])
+    ingredients = escape(data['recipe_ingredients'])
+    instructions = escape(data['recipe_instructions'])
     image = request.files['recipe_image'] if 'recipe_image' in request.files else None
+
+    print(f"\n\n\nRecipe name: {name}\nDescription: {description}\ningredients: {ingredients}\ninstructions: {instructions}")
+    dbm.insertRecipe(name,description,ingredients,instructions,image,cookies)
     return Success.submit_success(name,description,ingredients,instructions,image)
 
 
