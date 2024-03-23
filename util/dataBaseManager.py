@@ -17,7 +17,7 @@ db = mongo_client["cse312"]
 def registerUser(username, password):
     userRecord = db["profiles"]
     userRecord.insert_one({'username':username,'password':password,'AuthToken':''})
-
+    createUserLikeList(username) # create the record for user likes
 
 # checks if a username already exists
 # arguments: username is a string, returns True if username is already tied to an account, False otherwise
@@ -137,6 +137,38 @@ def insertRecipe(name,description,ingredients,instructions,image, cookies):
     # should only post if a valid user with a valid authtoken is doing it
     # not going to include adding image to db yet since more work will be required for this
     if username:
-        recipeBook.insert_one({"user":username,"name":name,"description":description,"ingredients":ingredients,"instructions":instructions,"deleted":False})
-    
+        recipeBook.insert_one({"user":username,"name":name,"description":description,"ingredients":ingredients,"instructions":instructions,"deleted":False,"id":idValue})
+        print(f"Recipe has been added to the book\n{username}\ndescription: {description}\ningredients: {ingredients}\ninstructions: {instructions}")
+    return idValue
 
+# return all recipes as a list of records
+def allRecipes():
+    recipeBook = db["recipes"]
+    return list(recipeBook.find({}))
+
+# this will be for keeping track of which users like which recipes
+# the general idea is we create a new container that will tie a username to a list of all the recipes the user as liked
+# the list will contain the numeric ID of the recipes
+# using this we can determine if a user has already liked a recipe and prevent them from liking it again
+# there will ideally be a visual change to the like button, like changing the color to green if the user likes it
+
+# this function here will be called everytime a user is registered, we create a record for their likes which will be empty 
+def createUserLikeList(username):
+    recipeLikes = db["recipeLikes"]
+    recipeLikes.insert_one({"username":username,"likes":[]})
+
+def updateUserLikes(username, recipeID):
+    recipeLikes = db["recipeLikes"]
+    try:
+        userRecord = list(recipeLikes.find_one({"username":username}))
+    
+        realRecord = userRecord[0]
+        likes = realRecord["likes"]
+        newLikes = likes.append(recipeID)
+        filter = {"username":username}
+        update = {'$set':{"likes":newLikes}}
+        recipeLikes.update_one(filter,update)
+        print(f"{username} has been updated to like {newLikes}")
+    except (IndexError, TypeError):
+        return False
+    

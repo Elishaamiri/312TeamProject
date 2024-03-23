@@ -142,10 +142,35 @@ def submit():
     image = request.files['recipe_image'] if 'recipe_image' in request.files else None
 
     print(f"\n\n\nRecipe name: {name}\nDescription: {description}\ningredients: {ingredients}\ninstructions: {instructions}")
-    dbm.insertRecipe(name,description,ingredients,instructions,image,cookies)
-    return Success.submit_success(name,description,ingredients,instructions,image)
+    id = dbm.insertRecipe(name,description,ingredients,instructions,image,cookies)
+    return Success.submit_success(name,description,ingredients,instructions,image,id)
+
+@app.route('/recipe',methods=["GET"])
+def recipe():
+    allRecipes = dbm.allRecipes()
+    retList = []
+    for x in allRecipes:
+        if x.get("deleted") != True:
+            cleanx = {key: value for key, value in x.items() if key != '_id'}
+            retList.append(cleanx)
+    retJSON = json.dumps(retList)
+    return Success.getRecipes_success(retJSON)
+
+@app.route('/likeRecipe/<int:recipe_id>',methods=["POST"])
+def likeRecipe(recipe_id):
+    cookies = request.cookies
+    if "AuthToken" not in cookies:
+        return Errors.badrequest()
+    else:
+        # Authtoken exists we can use this to find the username of the individual that liked the recipe
+        token = cookies.get("AuthToken")
+        name = dbm.findUserFromToken(token)
+        if name:
+            dbm.updateUserLikes(name,recipe_id)
+            return Success.userLike()
 
 
+        
 
 if __name__ == "__main__":
     app.run("0.0.0.0","8080")
