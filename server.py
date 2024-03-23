@@ -21,7 +21,14 @@ def home():
     if "AuthToken" not in request.cookies:
         return Success.defaultPageLoad_success("homepage.html")
     else:
-        return Success.defaultPageLoad_success("basic.html")
+        # logic for checking the token
+        token = request.cookies.get("AuthToken")
+        # check the data base to see if this token was issued to a user
+        user = dbm.findUserFromToken(token) 
+        if user == False:
+            return Success.defaultPageLoad_success("homepage.html")
+        else:
+            return Success.defaultPageLoad_success("basic.html")
     
 @app.route("/static/<path:filepath>")
 def getFile(filepath):
@@ -87,12 +94,12 @@ def logout():
 @app.route('/submit',methods=["POST"])
 def submit():
     data = request.form
-    recipeName = data['recipe_name']
-    recipeDescription = data['recipe_description']
-    recipeIngredients = data['recipe_ingredients']
-    recipeInstructions = data['recipe_instructions']
-    recipe_image = request.files['recipe_image'] if 'recipe_image' in request.files else None
-    return Success.submit_success()
+    name = data['recipe_name']
+    description = data['recipe_description']
+    ingredients = data['recipe_ingredients']
+    instructions = data['recipe_instructions']
+    image = request.files['recipe_image'] if 'recipe_image' in request.files else None
+    return Success.submit_success(name,description,ingredients,instructions,image)
 
 
 

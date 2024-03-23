@@ -52,12 +52,14 @@ def userLogin(username, password):
 
 
 # for finding an individuals username using the authentication token
-# arguments: token is a hashed authentication token string
+# arguments: token is an unhashed authentication token string
 # if the token is valid, returns the name of the user the token was issued to, False otherwise
 def findUserFromToken(token):
+    # token must be hashed before we check the database
+    hashToken = bcrypt.hashpw(token.encode('ascii'),util.authSalt)
     userRecord = db["profiles"]
     try:
-        record = list(userRecord.find({"AuthToken":token}))[0]
+        record = list(userRecord.find({"AuthToken":hashToken}))[0]
         username = record["username"]
         return username
     except IndexError:

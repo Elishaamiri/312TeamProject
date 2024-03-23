@@ -13,8 +13,7 @@ class Success():
           res.set_cookie("AuthToken",authToken,10000,httponly=True)
           res.mimetype = "text/plain"
 
-          Token = bcrypt.hashpw(authToken.encode('ascii'),util.authSalt)
-          user = dbm.findUserFromToken(Token)
+          user = dbm.findUserFromToken(authToken)
           print(f"User: {user} has logged in")
 
           return res
@@ -47,7 +46,7 @@ class Success():
           res.headers['X-Content-Type-Options'] = "nosniff"
           return res
 
-     def submit_success():
+     def submit_success(name,description,ingredients,instructions,image):
           res = make_response(json.dumps({}))
           res.status_code = "201 Created"
           res.mimetype = "application/json"
