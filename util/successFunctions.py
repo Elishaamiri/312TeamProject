@@ -1,4 +1,4 @@
-from flask import make_response,render_template,send_file
+from flask import make_response,render_template,send_from_directory
 import mimetypes
 import json
 from util import dataBaseManager as dbm
@@ -32,11 +32,6 @@ class Success():
           res.location = "/"
           res.headers['X-Content-Type-Options'] = "nosniff"
           res.mimetype = "application/json"
-          return res
-     
-     def fileGet_success(filepath):
-          res = make_response(send_file(filepath),mimetypes.guess_type(filepath)[0])
-          res.headers['X-Content-Type-Options'] = 'nosniff'
           return res
 
      def logout_success():
