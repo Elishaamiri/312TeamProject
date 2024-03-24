@@ -8,6 +8,14 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='/favicon.ico')}}"> -->
     <link rel="shortcut icon" href="../static/images/favicon.ico">
     <link rel="stylesheet" href="../static/css/styles.css">
+    <header id = "landing-header">
+        <h1 id = "landing-header-text">Recipe Sharing Platform</h1>
+        <nav>
+            <a id = "landing-header-text" href="/">Home</a>
+            <a id = "landing-header-text" href="/recipes">Browse Recipes</a>
+            <a id = "landing-header-text" href="/submit">Submit Recipe</a>
+            </nav>
+    </header>
     <div class="image_div">
         <img src="/static/images/displayImage.jpg" alt="Office Brawl" class="my_image"/>
     </div>
@@ -22,14 +30,6 @@
             We 
         </p>
     </div>
-    <header>
-        <h1>Recipe Sharing Platform</h1>
-        <nav>
-            <a href="/">Home</a>
-            <a href="/recipes">Browse Recipes</a>
-            <a href="/submit">Submit Recipe</a>
-            </nav>
-    </header>
     <main>
         <section id="recipe-list">
             <h2>Featured Recipes</h2>
