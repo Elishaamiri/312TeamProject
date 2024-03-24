@@ -140,19 +140,34 @@ def submit():
     ingredients = escape(data['recipe_ingredients'])
     instructions = escape(data['recipe_instructions'])
     image = request.files['recipe_image'] if 'recipe_image' in request.files else None
-
+    # image included for future use however there is currently no support for image uploads
+    
     print(f"\n\n\nRecipe name: {name}\nDescription: {description}\ningredients: {ingredients}\ninstructions: {instructions}")
     id = dbm.insertRecipe(name,description,ingredients,instructions,image,cookies)
     return Success.submit_success(name,description,ingredients,instructions,image,id)
 
 @app.route('/recipe',methods=["GET"])
 def recipe():
+    # will be using Authtoken cookie to check the user making the request
+    # the user data will then be used to determine which posts have been liked
+
+    name = dbm.findUserFromToken(request.cookies.get("AuthToken"))
+    likes = dbm.getUserLikes(name)
+
     allRecipes = dbm.allRecipes()
     retList = []
     for x in allRecipes:
         if x.get("deleted") != True:
             cleanx = {key: value for key, value in x.items() if key != '_id'}
-            retList.append(cleanx)
+            # added stuff for testing userlikes
+            if likes is None:
+                cleanx.update({"likes":[]})
+            else:
+                cleanx.update({"likes":likes})
+
+
+            # end of userlike added stuff
+            retList.append(cleanx)  
     retJSON = json.dumps(retList)
     return Success.getRecipes_success(retJSON)
 
@@ -169,8 +184,9 @@ def likeRecipe(recipe_id):
             dbm.updateUserLikes(name,recipe_id)
             return Success.userLike()
 
-
-        
+@app.route('/likeRecipe/', methods=["GET"])
+def retLikes():
+    return Success.retLikes()        
 
 if __name__ == "__main__":
     app.run("0.0.0.0","8080")

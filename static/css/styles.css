@@ -109,3 +109,14 @@ body {
 .username_div {
     text-align: center;
 }
+.like-buttonR {
+    height: 10%;
+    width: 15%;
+    background-color: red;
+}
+
+.like-buttonG {
+    height: 10%;
+    width: 15%;
+    background-color: rgb(52, 192, 52);
+}
