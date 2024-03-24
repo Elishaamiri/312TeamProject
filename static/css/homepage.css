@@ -4,7 +4,15 @@ body{
      background-image: url("../images/HomepageBackgroundImage.jpg");
      background-size:cover;
 }
-
+.login-div {
+     position: absolute;
+     width: 100%;
+     text-align: center;
+     padding-top: center;
+     background-color: rgba(0, 0, 0, 0.5);
+     z-index: 2;
+     color: red;
+}
 .Container{
      display: flex;
      align-items: center;

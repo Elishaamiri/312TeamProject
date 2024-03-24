@@ -46,13 +46,29 @@ class Success():
           res.headers['X-Content-Type-Options'] = "nosniff"
           return res
 
-     def submit_success(name,description,ingredients,instructions,image):
+     def submit_success(name,description,ingredients,instructions,image,id):
           name = str(name)
           description = str(description)
           ingredients = str(ingredients)
           instructions = str(instructions)
-          res = make_response(json.dumps({'name':name,'description':description,'ingredients':ingredients,'instructions':instructions}))
-          res.status_code = "201 Created"
+          res = make_response(json.dumps({'name':name,'description':description,'ingredients':ingredients,'instructions':instructions,'id':id}))
+          res.status_code = "302 Created"
           res.mimetype = "application/json"
           res.headers['X-Content-Type-Options'] = "nosniff"
+          res.location = "./"
+          return res
+     
+     def getRecipes_success(retJSON):
+          res = make_response(retJSON)
+          res.status_code = "200 OK"
+          res.mimetype = "application/json"
+          res.headers['X-Content-Type-Options'] = 'nosniff'
+          return res
+     
+     def userLike():
+          res = make_response("liked")
+          res.status_code = "302 Liked"
+          res.mimetype = "text/plain"
+          res.headers['X-Content-Type-Options'] = "nosniff"
+          res.location = "./"
           return res
