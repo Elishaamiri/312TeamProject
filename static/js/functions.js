@@ -8,8 +8,24 @@ function recipeHTML(recipeJSON){
     const description = recipeJSON.description;
     const instructions = recipeJSON.instructions;
     const ingredients = recipeJSON.ingredients;
-    let detailsHTML = "<br><button onclick='likeRecipe(\"" + recipeID + "\")'>👍</button> ";
-    detailsHTML += "<span id='recipe_" + recipeID + "'><b>" + username + "</b> presents-- " + name + "<br>Description:<br>" + description + "<br>Ingredients:<br>" + ingredients + "<br>Instructions:<br>" + instructions + "</span>";
+    // likes should be specific to the user loading the page
+    const likes = recipeJSON.likes; 
+    console.log('likes');
+    console.log(likes);
+    console.log('recipe ID');
+    console.log(recipeID);
+    let detailsHTML = "<span id='recipe_" + recipeID + "'><b>" + username + "</b> presents: " + name + "<br>Description:<br>" + description + "<br>Ingredients:<br>" + ingredients + "<br>Instructions:<br>" + instructions + "</span>";
+    
+    if (likes.includes(parseInt(recipeID, 10))) {
+        detailsHTML += "<br><button onclick='likeRecipe(\"" + recipeID + "\")' class='like-buttonG'>👍</button><br>";
+        console.log('button will be green');
+    } else {
+        console.log('button will be red');
+        detailsHTML += "<br><button onclick='likeRecipe(\"" + recipeID + "\")' class='like-buttonR'>👍</button><br>";
+    }
+   
+    
+    
     return detailsHTML;
 }
 
@@ -48,6 +64,9 @@ function clearRecipes() {
 
 function updateRecipes() {
     const request = new XMLHttpRequest();
+
+    const scrollPosition = window.scrollY;
+
     request.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             clearRecipes();
@@ -55,8 +74,9 @@ function updateRecipes() {
             for (const recipe of recipes) {
                 addRecipiesToList(recipe);
             }
+            window.scrollTo(0, scrollPosition);       
         }
-    }
+    } 
     request.open("GET", "/recipe");
     request.send();
 }
@@ -83,6 +103,8 @@ function homeLoaded(){
     document.getElementById("jsText").innerHTML +="<br/> Have been waiting for you";
 
     updateRecipes();
+
+    setInterval(updateRecipes, 5000);
 }
 
 
