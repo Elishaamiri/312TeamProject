@@ -160,15 +160,35 @@ def createUserLikeList(username):
 def updateUserLikes(username, recipeID):
     recipeLikes = db["recipeLikes"]
     try:
-        userRecord = list(recipeLikes.find_one({"username":username}))
-    
-        realRecord = userRecord[0]
-        likes = realRecord["likes"]
-        newLikes = likes.append(recipeID)
-        filter = {"username":username}
-        update = {'$set':{"likes":newLikes}}
-        recipeLikes.update_one(filter,update)
-        print(f"{username} has been updated to like {newLikes}")
+
+        userRecord = recipeLikes.find_one({"username":username})
+        if userRecord is None:
+            # this shouldn't really ever happen but this is a just in case clause
+            return False
+        
+        likes = userRecord.get("likes", [])
+        if likes is None:
+            likes = []
+        
+        if recipeID in likes:
+            print(f"user already liked: {recipeID}")
+        else:
+            likes.append(recipeID)
+            filter = {"username":username}
+            update = {'$set':{"likes":likes}}
+            recipeLikes.update_one(filter,update)
+            print(f"{username} has been updated to like {recipeID}")
     except (IndexError, TypeError):
         return False
-    
+
+# takes in a username and returns a list of integers representing the ID's of liked recipes
+def getUserLikes(username):
+    recipeLikes = db["recipeLikes"]
+    try:
+        userRecord = recipeLikes.find_one({"username":username})
+        print(f"userRecord: {userRecord}")
+        likes = userRecord.get("likes",[])
+        print(f"likes: {likes}")
+        return likes
+    except IndexError:
+        return False

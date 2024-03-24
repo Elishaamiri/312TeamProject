@@ -72,3 +72,11 @@ class Success():
           res.headers['X-Content-Type-Options'] = "nosniff"
           res.location = "./"
           return res
+     
+     def retLikes():
+          res = make_response("likes")
+          res.status_code = "200 OK"
+          res.mimetype = "text/plain"
+          res.headers['X-Content-Type-Options'] = "nosniff"
+          #res.location = "./"
+          return res

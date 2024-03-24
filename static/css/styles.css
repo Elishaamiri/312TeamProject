@@ -82,3 +82,15 @@ button:hover {
     height: 10%;
     width: 10%;
 }
+
+.like-buttonR {
+    height: 10%;
+    width: 15%;
+    background-color: red;
+}
+
+.like-buttonG {
+    height: 10%;
+    width: 15%;
+    background-color: rgb(52, 192, 52);
+}
