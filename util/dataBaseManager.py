@@ -101,17 +101,6 @@ def handleLogout(token):
     update = {'$set':{"AuthToken":""}}
     userRecord.update_one(filter,update)
     
-    
-
-
-
-
-
-
-
-
-
-
 
 # OPERATIONS FOR RECIPE POSTING
 

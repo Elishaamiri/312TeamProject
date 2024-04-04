@@ -35,6 +35,24 @@ def home():
         else:
             return Success.defaultPageLoad_success("basic.html","home",request.cookies)
 
+@app.route("/recipes", methods=["GET"])
+def recipes():
+    if "AuthToken" not in request.cookies:
+            return Errors.unauthorized_user() 
+    else:
+        # logic for checking the token
+        token = request.cookies.get("AuthToken")
+        # check the data base to see if this token was issued to a user
+        # since all logged out users have an AuthToken value of '' this check ensures that if the Auth token is '' it doesn't try to check to database
+        if token == '':
+            user = False
+        else:
+            user = dbm.findUserFromToken(token) 
+        if user == False:
+            return Errors.unauthorized_user()
+        else:
+            return Success.defaultPageLoad_success("recipes.html","home",request.cookies)
+
 @app.route("/static/css/<subpath>" ,methods=["GET"])
 def send_css(subpath):
     res = make_response(send_from_directory("static/css",subpath))
@@ -42,15 +60,6 @@ def send_css(subpath):
     res.headers['X-Content-Type-Options'] = 'nosniff'
     res.mimetype = mimetypes.guess_type(subpath)[0]
     return res
-
-#@app.route("/static/favicon.ico", methods=["GET"])
-#def send_favicon():
-#    res = make_response(send_from_directory("static/favicon.ico"))
-#    res.status_code = "200 OK"
-#    res.headers['X-Content-Type-Options'] = 'nosniff'
-#    res.mimetype = "image/x-icon"
-#    return res
-
 
 @app.route("/static/images/<subpath>" ,methods=["GET"])
 def send_images(subpath):
@@ -90,10 +99,6 @@ def register():
     #Return Success Message
     return Success.register_success(data['username'],data['password'])
 
-
-
-
-
 @app.route('/login',methods=['POST'])
 def login():
     data = request.form
@@ -111,9 +116,6 @@ def login():
     #Return Success Message
     return Success.login_success(authToken)
 
-
-
-
 @app.route('/logout',methods=["POST"])
 def logout():
     data = request.cookies
@@ -126,10 +128,6 @@ def logout():
     #     print(i)
     return Success.logout_success()
 
-
-
-
-
 @app.route('/submit',methods=["POST"])
 def submit():
     data = request.form
@@ -141,7 +139,7 @@ def submit():
     instructions = escape(data['recipe_instructions'])
     image = request.files['recipe_image'] if 'recipe_image' in request.files else None
     # image included for future use however there is currently no support for image uploads
-    
+    image.save('static/images/'+image.name)
     print(f"\n\n\nRecipe name: {name}\nDescription: {description}\ningredients: {ingredients}\ninstructions: {instructions}")
     id = dbm.insertRecipe(name,description,ingredients,instructions,image,cookies)
     return Success.submit_success(name,description,ingredients,instructions,image,id)
