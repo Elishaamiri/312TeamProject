@@ -58,6 +58,13 @@ class Success():
           res.location = "./"
           return res
      
+     def username_success(username):
+          res = make_response(json.dumps({'username':username}))
+          res.status_code = "200 OK"
+          res.mimetype = "application/json"
+          res.headers['X-Content-Type-Options'] = "nosniff"
+          return res
+
      def getRecipes_success(retJSON):
           res = make_response(retJSON)
           res.status_code = "200 OK"

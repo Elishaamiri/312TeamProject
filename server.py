@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, make_response, send_from_directory,url_for
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO,emit
 from html import escape
 import util.util as util
 from util.errorFunctions import Errors
@@ -11,11 +11,11 @@ import json
 import pymongo
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] ='applebottomjeansbootswiththefurWITHTHEFURthewholeclubislookingather'
 socketapp = SocketIO(app)
 mongo_client = pymongo.MongoClient("mongo")
 db = mongo_client["cse312"]
 db_data = db['data']
-longAuthToken = ""
 
 
 @app.route("/", methods=["GET"])
@@ -76,34 +76,20 @@ def recipes():
 
 @app.route("/getReviews",methods=["GET"])
 def getReviews():
-    longAuthToken = request.cookies.get("AuthToken")
-    name = dbm.findUserFromToken(request.cookies.get("AuthToken"))
-    likes = dbm.getUserLikes(name)
+    allReviews = dbm.allReviews()
+    allRecipes = json.dumps(allReviews)
+    return Success.getRecipes_success(allRecipes)
 
-    allRecipes = dbm.allReviews()
-    retList = []
-    for x in allRecipes:
-        if x.get("deleted") != True:
-            cleanx = {key: value for key, value in x.items() if key != '_id'}
-            # added stuff for testing userlikes
-            if likes is None:
-                cleanx.update({"likes":[]})
-            else:
-                cleanx.update({"likes":likes})
+@socketapp.on('connect')
+def connected():
+    print("Hello")
 
-
-            # end of userlike added stuff
-            retList.append(cleanx)  
-    retJSON = json.dumps(retList)
-    print(retJSON)
-    return Success.getRecipes_success(retJSON)
-
-# @socketapp.on('message')
-# def ReviewRecieved(review):
-#     id = dbm.insertReview(review,longAuthToken)
-#     user = dbm.findUserFromToken(longAuthToken)
-#     returnjson = {'username':user,'review':review,'id':id}
-#     socketapp.send(json.dumps(returnjson), True)
+@socketapp.on('message')
+def ReviewRecieved(review):
+    print("RECIEVED DATA: " + str(review))
+    id = dbm.insertReview(escape(review['data']),review['username'])
+    returnjson = {'username':review['username'],'review': escape(review['data']),'id':id}
+    emit('reviewMessage',returnjson,broadcast=True)
 
 @app.route("/static/css/<subpath>" ,methods=["GET"])
 def send_css(subpath):
@@ -150,6 +136,13 @@ def register():
     dbm.registerUser(username,hashedpassword)
     #Return Success Message
     return Success.register_success(data['username'],data['password'])
+
+@app.route('/obtainUsername',methods=["GET"])
+def obtainUsername():
+    username = dbm.findUserFromToken(request.cookies.get("AuthToken"))
+    if username == False:
+        usernaem = "Anon"
+    return Success.username_success(username)
 
 @app.route('/login',methods=['POST'])
 def login():
@@ -244,7 +237,7 @@ def retLikes():
     return Success.retLikes()        
 
 if __name__ == "__main__":
-    app.run("0.0.0.0","8080")
+    socketapp.run(app=app,host="0.0.0.0",port="8080",allow_unsafe_werkzeug=True)
 
 
     

@@ -22,13 +22,14 @@
                <div id="posted-reviews"></div>
           </section>
 
-          <form enctype="multipart/form-data">
+          <div>
                <label for="reviewInput">Enter Review Here:</label>
                <textarea id="reviewInput" name="review_input" required></textarea>
-               <button type="submit" onclick="sendReview()">Submit Review</button>
-          </form>   
+               <button onclick="sendReview()">Submit Review</button>
+          </div>
      </main>
-
+          <!--Obtained Via https://flask-socketio.readthedocs.io/en/latest/getting_started.html#initialization -->
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
         <script src="/static/js/reviewapp.js"></script>
 </body>
 </html>

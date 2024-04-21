@@ -103,18 +103,23 @@ def handleLogout(token):
     
 
 # OPERATION FOR REVIEW POSTING
-def insertReview(review,token):
+def insertReview(review,username):
     reviewLog = db["reviews"]
-    username = findTokenFromUsername(token)
     reviewID = util.Util.generateRandomID(64)
-    reviewLog.insert_one({""})
+
+    if username == "":
+        username = "Anon"
 
     if username:
         reviewLog.insert_one({"username":username,"review":review,"id":reviewID})
     return reviewID
 
 def allReviews():
-    return list(db['reviews'].find({}))
+    a = db['reviews'].find({})
+    retList = []
+    for i in a:
+        retList.append({"username":i['username'],'review':i['review'],'id':i['id']})
+    return list(retList)
 
 # OPERATIONS FOR RECIPE POSTING
 
@@ -133,7 +138,6 @@ def insertRecipe(name,description,ingredients,instructions,image,cookies):
     except IndexError:
         idValue = None
 
-    if idValue == None:
         idValue = 1
     else:
         idValue = int(idValue)
