@@ -63,7 +63,7 @@ button:hover {
     background-color: #0056b3;
 }
 
-.recipe-card {
+.recipe-card{
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     border-radius: 8px;
@@ -74,7 +74,7 @@ button:hover {
 }
 
 .recipe-card img {
-    width: 100%;
+    width: 200px;
     height: auto;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -119,4 +119,9 @@ body {
     height: 10%;
     width: 15%;
     background-color: rgb(52, 192, 52);
+}
+
+.recipe_image{
+    width: 200px;
+    height: auto;
 }

@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, make_response, send_from_directory,url_for
+from flask_socketio import SocketIO
 from html import escape
 import util.util as util
 from util.errorFunctions import Errors
@@ -10,9 +11,11 @@ import json
 import pymongo
 
 app = Flask(__name__)
+socketapp = SocketIO(app)
 mongo_client = pymongo.MongoClient("mongo")
 db = mongo_client["cse312"]
 db_data = db['data']
+longAuthToken = ""
 
 
 @app.route("/", methods=["GET"])
@@ -35,6 +38,24 @@ def home():
         else:
             return Success.defaultPageLoad_success("basic.html","home",request.cookies)
 
+@app.route("/reviews", methods=["GET"])
+def reviews():
+    if "AuthToken" not in request.cookies:
+            return Errors.unauthorized_user() 
+    else:
+        # logic for checking the token
+        token = request.cookies.get("AuthToken")
+        # check the data base to see if this token was issued to a user
+        # since all logged out users have an AuthToken value of '' this check ensures that if the Auth token is '' it doesn't try to check to database
+        if token == '':
+            user = False
+        else:
+            user = dbm.findUserFromToken(token) 
+        if user == False:
+            return Errors.unauthorized_user()
+        else:
+            return Success.defaultPageLoad_success("reviewapp.html","home",request.cookies)
+        
 @app.route("/recipes", methods=["GET"])
 def recipes():
     if "AuthToken" not in request.cookies:
@@ -52,6 +73,37 @@ def recipes():
             return Errors.unauthorized_user()
         else:
             return Success.defaultPageLoad_success("recipes.html","home",request.cookies)
+
+@app.route("/getReviews",methods=["GET"])
+def getReviews():
+    longAuthToken = request.cookies.get("AuthToken")
+    name = dbm.findUserFromToken(request.cookies.get("AuthToken"))
+    likes = dbm.getUserLikes(name)
+
+    allRecipes = dbm.allReviews()
+    retList = []
+    for x in allRecipes:
+        if x.get("deleted") != True:
+            cleanx = {key: value for key, value in x.items() if key != '_id'}
+            # added stuff for testing userlikes
+            if likes is None:
+                cleanx.update({"likes":[]})
+            else:
+                cleanx.update({"likes":likes})
+
+
+            # end of userlike added stuff
+            retList.append(cleanx)  
+    retJSON = json.dumps(retList)
+    print(retJSON)
+    return Success.getRecipes_success(retJSON)
+
+# @socketapp.on('message')
+# def ReviewRecieved(review):
+#     id = dbm.insertReview(review,longAuthToken)
+#     user = dbm.findUserFromToken(longAuthToken)
+#     returnjson = {'username':user,'review':review,'id':id}
+#     socketapp.send(json.dumps(returnjson), True)
 
 @app.route("/static/css/<subpath>" ,methods=["GET"])
 def send_css(subpath):
@@ -139,9 +191,13 @@ def submit():
     instructions = escape(data['recipe_instructions'])
     image = request.files['recipe_image'] if 'recipe_image' in request.files else None
     # image included for future use however there is currently no support for image uploads
-    image.save('static/images/'+image.name)
-    print(f"\n\n\nRecipe name: {name}\nDescription: {description}\ningredients: {ingredients}\ninstructions: {instructions}")
-    id = dbm.insertRecipe(name,description,ingredients,instructions,image,cookies)
+    filename = "None"
+    if image.filename != '':
+        filename = util.Util.generateRandomID(32)+"_"+image.filename
+        image.save('static/images/'+filename)
+        
+    print(f"\n\n\nRecipe name: {name}\nDescription: {description}\ningredients: {ingredients}\ninstructions: {instructions}\nImageName: {filename}")
+    id = dbm.insertRecipe(name,description,ingredients,instructions,filename,cookies)
     return Success.submit_success(name,description,ingredients,instructions,image,id)
 
 @app.route('/recipe',methods=["GET"])
@@ -167,6 +223,7 @@ def recipe():
             # end of userlike added stuff
             retList.append(cleanx)  
     retJSON = json.dumps(retList)
+    print(retJSON)
     return Success.getRecipes_success(retJSON)
 
 @app.route('/likeRecipe/<int:recipe_id>',methods=["POST"])

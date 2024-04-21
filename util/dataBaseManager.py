@@ -102,9 +102,25 @@ def handleLogout(token):
     userRecord.update_one(filter,update)
     
 
+# OPERATION FOR REVIEW POSTING
+def insertReview(review,token):
+    reviewLog = db["reviews"]
+    username = findTokenFromUsername(token)
+    reviewID = util.Util.generateRandomID(64)
+    reviewLog.insert_one({""})
+
+    if username:
+        reviewLog.insert_one({"username":username,"review":review,"id":reviewID})
+    return reviewID
+
+def allReviews():
+    return list(db['reviews'].find({}))
+
 # OPERATIONS FOR RECIPE POSTING
 
-def insertRecipe(name,description,ingredients,instructions,image, cookies):
+
+
+def insertRecipe(name,description,ingredients,instructions,image,cookies):
     recipeBook = db["recipes"]
     # the assumption is the user needs to have an authtoken to be at this point so checking if it exists should be trivial
     token = cookies.get("AuthToken")
@@ -126,7 +142,7 @@ def insertRecipe(name,description,ingredients,instructions,image, cookies):
     # should only post if a valid user with a valid authtoken is doing it
     # not going to include adding image to db yet since more work will be required for this
     if username:
-        recipeBook.insert_one({"user":username,"name":name,"description":description,"ingredients":ingredients,"instructions":instructions,"deleted":False,"id":idValue})
+        recipeBook.insert_one({"user":username,"image":image,"name":name,"description":description,"ingredients":ingredients,"instructions":instructions,"deleted":False,"id":idValue})
         print(f"Recipe has been added to the book\n{username}\ndescription: {description}\ningredients: {ingredients}\ninstructions: {instructions}")
     return idValue
 
