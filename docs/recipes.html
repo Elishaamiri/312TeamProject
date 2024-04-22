@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Document</title>
+</head>
+<link rel="shortcut icon" href="../static/images/favicon.ico">
+<link rel="stylesheet" href="../static/css/styles.css">
+<header id = "landing-header">
+    <h1 id = "landing-header-text">Recipe Sharing Platform</h1>
+    <nav>
+        <a id = "landing-header-text" href="/">Home</a>
+        <a id = "landing-header-text" href="/recipes">Browse Recipes</a>
+        <a id = "landing-header-text" href="/reviews">View Reviews</a>
+        </nav>
+</header>
+<body onload="homeLoaded()">
+     <main>
+          <section id="recipe-list">
+               <h2>Featured Recipes</h2>
+               <!-- Sample recipe card insertion (You should replace this with dynamic content) -->
+               <div id="posted-recipes">
+               </div>
+               <div class="recipe-card">
+                    <img class="recipe_image" src="/static/images/displayImage.jpg" alt="Recipe Name">
+                    <div class="recipe-card-content">
+                         <h3 class="recipe-title">Recipe Name</h3>
+                         <p class="recipe-description">This is a short description of the recipe...</p>
+                    </div>
+               </div>
+          </section>
+        </main>
+        <script src="/static/js/functions.js"></script>
+</body>
+</html>
