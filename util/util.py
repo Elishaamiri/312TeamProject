@@ -1,7 +1,11 @@
 import random
 import re
 import bcrypt
+import hashlib
+import base64
 from flask import request
+GUIDkey = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+
 
 authSalt = b'$2b$12$c4kL2dmcmWvzgLmeQrZrb.'
 class Util:
@@ -27,3 +31,10 @@ class Util:
                         recievedItem = result[item]
                         return recievedItem
         return None
+     
+     def compute_accept(websocketKey):
+        appendedKey = websocketKey.strip() + GUIDkey
+        hashed = hashlib.sha1(appendedKey.encode('ascii'))
+        hashed = hashed.digest()
+        base64encoding = base64.b64encode(hashed)
+        return base64encoding.decode('ascii')

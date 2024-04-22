@@ -18,6 +18,15 @@ class Success():
 
           return res
      
+     def websocket_succ(key):
+          res = make_response()
+          res.headers['Connection'] = 'Upgrade'
+          res.headers['Upgrade'] = 'websocket'
+          res.headers['Sec-WebSocket-Accept'] = util.Util.generateRandomID(key)
+          res.status_code = "101 Switching Protocols"
+          return res
+
+
      def defaultPageLoad_success(page,pageType,cookies):
           if pageType == "login":
                res = make_response(render_template(page))

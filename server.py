@@ -55,7 +55,12 @@ def reviews():
             return Errors.unauthorized_user()
         else:
             return Success.defaultPageLoad_success("reviewapp.html","home",request.cookies)
-        
+
+@app.route('/websocket',methods=["GET"])
+def websocket():
+    print("AppleBottomJeans")
+    return Success.websocket_succ(request.headers['Sec-WebSocket-Key'])       
+
 @app.route("/recipes", methods=["GET"])
 def recipes():
     if "AuthToken" not in request.cookies:
@@ -237,7 +242,7 @@ def retLikes():
     return Success.retLikes()        
 
 if __name__ == "__main__":
-    socketapp.run(app=app,host="0.0.0.0",port="8080",allow_unsafe_werkzeug=True)
+    socketapp.run(app=app,host="0.0.0.0",port="8080",allow_unsafe_werkzeug=True,ssl_context=('./nginx/cert.pem', './nginx/private.key'))
 
 
     

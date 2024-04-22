@@ -1,4 +1,10 @@
-let socket = io()
+let socket = io('https://'+window.location.host,{
+     secure: true
+     }
+)
+
+// let socket = io()
+
 const reviewholder = document.getElementById("posted-reviews")
 let Globalusername = ""
 
