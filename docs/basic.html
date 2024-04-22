@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Sharing Platform</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='/favicon.ico')}}"> -->
+    <link rel="shortcut icon" href="../static/images/favicon.ico">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <header id = "landing-header">
+        <h1 id = "landing-header-text">Recipe Sharing Platform</h1>
+        <nav>
+            <a id = "landing-header-text" href="/">Home</a>
+            <a id = "landing-header-text" href="/recipes">Browse Recipes</a>
+            <a id = "landing-header-text" href="/reviews">View Reviews</a>
+            </nav>
+    </header>
+    <div class="image_div">
+        <img src="/static/images/displayImage.jpg" alt="Office Brawl" class="my_image"/>
+    </div>
+    <div class="username_div">
+        <h1>Welcome {{ username }}</h1>
+    </div>
+   
+</head>
+<body onload="homeLoaded()">
+    <div class="jsText-div">
+        <p id="jsText">
+            We 
+        </p>
+    </div>
+    <main>
+        <div class="recipe-form">
+            <section id="submit-recipe">
+                <h2>Share Your Recipe</h2>
+                <form action="/submit" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="recipeName">Recipe Name:</label>
+                        <input type="text" id="recipeName" name="recipe_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipeDescription">Recipe Description:</label>
+                        <textarea id="recipeDescription" name="recipe_description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipeIngredients">Ingredients:</label>
+                        <textarea id="recipeIngredients" name="recipe_ingredients" required placeholder="List ingredients..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipeInstructions">Instructions:</label>
+                        <textarea id="recipeInstructions" name="recipe_instructions" required placeholder="Step-by-step instructions..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipeImage">Recipe Image:</label>
+                        <input type="file" id="recipeImage" name="recipe_image" accept="image">
+                    </div>
+                    <button type="submit" onclick="sendRecipe()">Share Recipe</button>
+                </form>
+                
+                <div class="logoutbutton"><form action="/logout" method="post"><button type="submit">Log Out</button></form></div>
+            </section>
+        </div>
+    </main>
+    <footer>
+        <p>Developed by Jonah, Mat, Phillip, Elisha, and Sarah - Recipe Sharing Platform Project - CSE312</p>
+    </footer>
+    <script src="/static/js/functions.js"></script>
+</body>
+</html>
